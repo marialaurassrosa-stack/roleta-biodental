@@ -353,11 +353,11 @@
   "use strict";
 
   var segments = [
-    { label: "Maleta organizadora",   win:false, icon:"briefcase" },
-    { label: "Mala de viagem",        win:false, icon:"suitcase"  },
-    { label: "Garrafa personalizada", win:false, icon:"bottle"    },
-    { label: "Cupom de 30% OFF",      win:true,  icon:"ticket"    },
-    { label: "Não ganhou nada",       win:false, icon:"empty"     }
+    { label: "Maleta organizadora",   win:false },
+    { label: "Mala de viagem",        win:false },
+    { label: "Garrafa personalizada", win:false },
+    { label: "Cupom de 30% OFF",      win:true  },
+    { label: "Não ganhou nada",       win:false }
   ];
   var winIndex = segments.findIndex(function(s){ return s.win; });
   var segAngle = 360 / segments.length;
@@ -368,88 +368,6 @@
   var radius = size / 2;
 
   var palette = ["#FFCE1F", "#EE2E3D"];
-
-  function roundRectPath(x, y, w, h, r){
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.arcTo(x + w, y, x + w, y + h, r);
-    ctx.arcTo(x + w, y + h, x, y + h, r);
-    ctx.arcTo(x, y + h, x, y, r);
-    ctx.arcTo(x, y, x + w, y, r);
-    ctx.closePath();
-  }
-
-  function drawIcon(type, color, bgColor){
-    ctx.strokeStyle = color;
-    ctx.fillStyle = color;
-    ctx.lineWidth = size * 0.0075;
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-
-    if (type === "briefcase"){
-      roundRectPath(-20, -12, 40, 26, 4);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(0, -12, 9, Math.PI, 0, false);
-      ctx.stroke();
-      roundRectPath(-5, -15, 10, 7, 1.5);
-      ctx.fill();
-    } else if (type === "suitcase"){
-      roundRectPath(-16, -15, 32, 27, 4);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(-16, 0);
-      ctx.lineTo(16, 0);
-      ctx.stroke();
-      roundRectPath(-4.5, -25, 9, 11, 2);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(-9, 13, 3, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(9, 13, 3, 0, Math.PI * 2);
-      ctx.fill();
-    } else if (type === "bottle"){
-      roundRectPath(-3.5, -23, 7, 5, 1.5);
-      ctx.fill();
-      roundRectPath(-5, -18, 10, 7, 2);
-      ctx.stroke();
-      roundRectPath(-9.5, -12, 19, 30, 6);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(-9.5, 3);
-      ctx.lineTo(9.5, 3);
-      ctx.stroke();
-    } else if (type === "ticket"){
-      roundRectPath(-21, -13, 42, 26, 5);
-      ctx.stroke();
-      ctx.save();
-      ctx.fillStyle = bgColor;
-      ctx.beginPath();
-      ctx.arc(-21, 0, 5.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(21, 0, 5.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-      ctx.save();
-      ctx.setLineDash([3, 3]);
-      ctx.lineWidth = size * 0.0045;
-      ctx.beginPath();
-      ctx.moveTo(0, -9);
-      ctx.lineTo(0, 9);
-      ctx.stroke();
-      ctx.restore();
-    } else if (type === "empty"){
-      ctx.beginPath();
-      ctx.arc(0, 0, 17, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(-12, 12);
-      ctx.lineTo(12, -12);
-      ctx.stroke();
-    }
-  }
 
   function drawWheel(){
     ctx.clearRect(0,0,size,size);
@@ -473,20 +391,14 @@
       var flip = normalizedMid > 90 && normalizedMid < 270;
       var iconColor = segments[i].win ? "#FFCE1F" : "#25113D";
 
-      var iconDist = radius * 0.46;
-      ctx.save();
-      ctx.translate(radius + iconDist * Math.cos(mid), radius + iconDist * Math.sin(mid));
-      drawIcon(segments[i].icon, iconColor, segFill);
-      ctx.restore();
-
       ctx.save();
       ctx.translate(radius, radius);
       ctx.rotate(mid + (flip ? Math.PI : 0));
       ctx.textAlign = flip ? "left" : "right";
       ctx.textBaseline = "middle";
       ctx.fillStyle = iconColor;
-      ctx.font = "600 " + Math.round(size*0.0335) + "px 'Poppins', sans-serif";
-      wrapRadialText(segments[i].label, flip ? -(radius - 22) : (radius - 22), size*0.042);
+      ctx.font = "600 " + Math.round(size*0.04) + "px 'Poppins', sans-serif";
+      wrapRadialText(segments[i].label, flip ? -(radius - 26) : (radius - 26), size*0.05);
       ctx.restore();
     }
   }
