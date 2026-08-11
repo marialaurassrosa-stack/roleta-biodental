@@ -271,22 +271,43 @@
   }
   .result-desc b{color:var(--red);}
 
-  .coupon{
-    display:flex; align-items:center; justify-content:space-between;
-    gap:10px;
+  .prize-name{
+    font-size:24px; font-weight:900; line-height:1.15;
+    margin:0 0 10px;
+    color:var(--red);
+  }
+
+  .redeem-box{
     background:#fff;
     border:2px dashed var(--purple);
-    border-radius:12px;
-    padding:12px 16px;
-    margin-bottom:14px;
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:12px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
   }
-  .coupon-code{
-    font-family:"Courier New", monospace;
-    font-size:19px;
-    font-weight:900;
-    letter-spacing:1.5px;
-    color:var(--purple-deep);
+  .redeem-label{
+    font-size:13.5px; font-weight:700;
+    color:#4B3468;
+    margin:0;
   }
+  .whatsapp-btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    appearance:none; border:none; cursor:pointer; text-decoration:none;
+    background:#25D366;
+    color:#fff;
+    font-family:inherit; font-weight:800; font-size:15px;
+    padding:11px 20px;
+    border-radius:999px;
+    width:100%;
+    transition:background .15s ease, transform .12s ease;
+  }
+  .whatsapp-btn:hover{background:#1FB855;}
+  .whatsapp-btn:active{transform:translateY(2px);}
+  .whatsapp-btn:focus-visible{outline:2px solid var(--purple); outline-offset:2px;}
+
   .copy-btn{
     appearance:none; border:none; cursor:pointer;
     background:var(--purple);
@@ -300,6 +321,13 @@
   .copy-btn:hover{background:var(--purple-light);}
   .copy-btn:focus-visible{outline:2px solid var(--red); outline-offset:2px;}
   .copy-btn.copied{background:#1F9254;}
+  .copy-btn-secondary{
+    background:transparent;
+    color:var(--purple);
+    text-decoration:underline;
+    padding:2px 4px;
+  }
+  .copy-btn-secondary:hover{background:transparent; color:var(--purple-light);}
 
   .result-fine{
     font-size:12.5px; font-weight:700;
@@ -388,14 +416,19 @@
     </div>
 
     <div class="stage stage-prize" id="stagePrize" hidden>
-      <div class="result-emoji" aria-hidden="true">🎉</div>
-      <p id="resultTitle" class="result-title">Você ganhou um cupom!</p>
-      <p class="result-desc"><b>R$ 30 OFF</b> em compras a partir de <b>R$ 599,00</b></p>
-      <div class="coupon">
-        <span class="coupon-code" id="couponCode">DIADOESTUDANTE</span>
-        <button class="copy-btn" id="copyBtn" type="button">Copiar</button>
+      <div class="result-emoji" id="resultEmoji" aria-hidden="true">🎉</div>
+      <p id="resultTitle" class="result-title">Você ganhou:</p>
+      <p class="prize-name" id="prizeName">Sacola Prata</p>
+      <p class="result-desc" id="resultDesc">Válido para compras acima de <b>R$ 599,00</b>.</p>
+      <div class="redeem-box">
+        <p class="redeem-label">Para resgatar seu brinde, chame a gente no WhatsApp:</p>
+        <a class="whatsapp-btn" id="whatsappBtn" href="#" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.2h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.87 9.87 0 0 0 12.04 2zm5.81 14.13c-.24.68-1.4 1.3-1.94 1.38-.5.08-1.13.11-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.8-4.17-4.94-4.36-.14-.19-1.19-1.58-1.19-3.02 0-1.44.75-2.14 1.02-2.44.27-.29.58-.36.78-.36.2 0 .39 0 .56.01.18.01.42-.07.65.5.24.58.82 2.01.89 2.16.07.15.12.32.02.51-.1.19-.15.31-.29.48-.15.17-.31.37-.44.5-.15.14-.3.3-.13.58.17.29.75 1.24 1.62 2.01 1.11 1 2.05 1.31 2.34 1.46.29.15.46.13.63-.07.17-.2.71-.83.9-1.11.19-.29.38-.24.63-.14.26.1 1.64.78 1.92.92.28.14.47.21.53.33.07.12.07.68-.17 1.36z"/></svg>
+          Chamar no WhatsApp
+        </a>
+        <button class="copy-btn copy-btn-secondary" id="copyBtn" type="button">Copiar mensagem</button>
       </div>
-      <p class="result-fine">Válido até 01/09. Cupom de uso único, não cumulativo com outras promoções.</p>
+      <p class="result-fine" id="resultFine">Válido até 01/09.</p>
       <button class="close-btn" id="closeBtn" type="button">Fechar</button>
     </div>
   </div>
@@ -406,14 +439,20 @@
   "use strict";
 
   var segments = [
-    { label: "Maleta organizadora",   win:false },
-    { label: "Mala de viagem",        win:false },
-    { label: "Garrafa personalizada", win:false },
-    { label: "Cupom de R$30 OFF",     win:true  },
-    { label: "Não ganhou nada",       win:false }
+    { label: "Sacola Prata",      type:"gift",   emoji:"🎁" },
+    { label: "Tamborel",          type:"gift",   emoji:"🎁" },
+    { label: "Garrafinha Easy",   type:"gift",   emoji:"🎁" },
+    { label: "Cupom de R$30 OFF", type:"coupon", emoji:"🎟️" }
   ];
-  var winIndex = segments.findIndex(function(s){ return s.win; });
   var segAngle = 360 / segments.length;
+
+  var whatsappNumber = "554891962926";
+  var whatsappMessages = {
+    "Sacola Prata": "Olá! Girei a roleta do Dia do Estudante da Biodental e ganhei a *Sacola Prata* 🎁 Quero resgatar meu brinde!",
+    "Tamborel": "Olá! Girei a roleta do Dia do Estudante da Biodental e ganhei o *Tamborel* 🎁 Quero resgatar meu brinde!",
+    "Garrafinha Easy": "Olá! Girei a roleta do Dia do Estudante da Biodental e ganhei a *Garrafinha Easy* 🎁 Quero resgatar meu brinde!",
+    "Cupom de R$30 OFF": "Olá! Girei a roleta do Dia do Estudante da Biodental e ganhei o *cupom de R$30 OFF* 🎟️ Quero resgatar meu brinde!"
+  };
 
   var canvas = document.getElementById("wheel");
   var ctx = canvas.getContext("2d");
@@ -427,7 +466,7 @@
     for (var i = 0; i < segments.length; i++){
       var start = (i * segAngle) * Math.PI / 180;
       var end = ((i + 1) * segAngle) * Math.PI / 180;
-      var segFill = segments[i].win ? "#4E1C8C" : palette[i % 2];
+      var segFill = segments[i].type === "coupon" ? "#4E1C8C" : palette[i % 2];
 
       ctx.beginPath();
       ctx.moveTo(radius, radius);
@@ -442,7 +481,7 @@
       var mid = start + (end - start) / 2;
       var normalizedMid = ((mid * 180 / Math.PI) % 360 + 360) % 360;
       var flip = normalizedMid > 90 && normalizedMid < 270;
-      var iconColor = segments[i].win ? "#FFCE1F" : "#25113D";
+      var iconColor = segments[i].type === "coupon" ? "#FFCE1F" : "#25113D";
 
       ctx.save();
       ctx.translate(radius, radius);
@@ -488,13 +527,19 @@
   var copyBtn = document.getElementById("copyBtn");
   var stageGreeting = document.getElementById("stageGreeting");
   var stagePrize = document.getElementById("stagePrize");
+  var resultEmoji = document.getElementById("resultEmoji");
+  var prizeName = document.getElementById("prizeName");
+  var resultDesc = document.getElementById("resultDesc");
+  var resultFine = document.getElementById("resultFine");
+  var whatsappBtn = document.getElementById("whatsappBtn");
   var greetingTimer = null;
-  var couponCode = document.getElementById("couponCode").textContent;
   var currentRotation = 0;
   var spinning = false;
+  var chosenIndex = 0;
+  var currentMessage = "";
 
-  function targetRotation(){
-    var center = winIndex * segAngle + segAngle / 2;
+  function targetRotation(index){
+    var center = index * segAngle + segAngle / 2;
     var base = (270 - center + 360) % 360;
     var jitter = (Math.random() * 2 - 1) * (segAngle / 2 - 10);
     var spins = 5 + Math.floor(Math.random() * 2);
@@ -507,7 +552,8 @@
     spinBtn.disabled = true;
     spinBtn.textContent = "GIRANDO...";
 
-    currentRotation = targetRotation();
+    chosenIndex = Math.floor(Math.random() * segments.length);
+    currentRotation = targetRotation(chosenIndex);
     canvas.style.transform = "rotate(" + currentRotation + "deg)";
 
     window.setTimeout(function(){
@@ -529,6 +575,15 @@
   }
 
   function showResult(){
+    var prize = segments[chosenIndex];
+    resultEmoji.textContent = prize.emoji;
+    prizeName.textContent = prize.label;
+    resultDesc.innerHTML = "Válido para compras acima de <b>R$ 599,00</b>." +
+      (prize.type === "coupon" ? " Cupom válido apenas 1 por CPF." : "");
+    resultFine.textContent = "Válido até 01/09. Mostre o WhatsApp respondido para retirar seu brinde.";
+    currentMessage = whatsappMessages[prize.label];
+    whatsappBtn.href = "https://wa.me/" + whatsappNumber + "?text=" + encodeURIComponent(currentMessage);
+
     stageGreeting.hidden = false;
     stagePrize.hidden = true;
     backdrop.classList.add("show");
@@ -565,10 +620,10 @@
       }, 1800);
     }
     if (navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(couponCode).then(done).catch(done);
+      navigator.clipboard.writeText(currentMessage).then(done).catch(done);
     } else {
       var ta = document.createElement("textarea");
-      ta.value = couponCode;
+      ta.value = currentMessage;
       ta.style.position = "fixed";
       ta.style.opacity = "0";
       document.body.appendChild(ta);
